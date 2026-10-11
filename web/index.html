@@ -121,7 +121,7 @@ body {
     <p class="meta" id="panelMeta">Level 1 · Best 1</p>
     <div class="reward" id="panelReward" hidden><svg viewBox="0 0 20 20"><use href="#coinIcon"/></svg><span id="panelRewardText">+0</span></div>
     <button class="btn" id="panelButton" type="button">TAP TO PLAY</button>
-    <p class="help" id="panelHelp">Drag anywhere to ride. Coins follow you.<br>Stand on a price sign to build. Hold the road at night.</p>
+    <p class="help" id="panelHelp">Drag anywhere to march. Your gold follows you.<br>Stand on a price sign to build. Hold the road at night.</p>
   </div>
 </div>
 
@@ -575,7 +575,7 @@ const C = {
   horse: '#f3f1ec', horseDark: '#b9b3a8', cape: '#c42626', wheat: '#e2b74a', wheatDark: '#b98b2c',
 };
 const FONT = '"Nunito", system-ui, sans-serif';
-const TILT = 0.84, CLIFF_H = 0.85, WALL = 1.15, UNIT_SCALE = 1.45, COIN_SPACING = 0.26, COIN_MAX = 60;
+const TILT = 0.84, CLIFF_H = 0.85, WALL = 1.15, UNIT_SCALE = 2.0, COIN_SPACING = 0.26, COIN_MAX = 60;
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -604,25 +604,53 @@ function makeSprite(w, h, draw) {
 }
 function rr(g, x, y, w, h, r) { g.beginPath(); g.roundRect(x, y, w, h, r); g.closePath(); }
 function ellipse(g, x, y, rx, ry) { g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); g.fill(); }
-function soldierFrames(body, edge, head, helmet, opts = {}) {
-  return [0, 1].map(frame => makeSprite(20, 26, g => {
+// Chunky low-poly knight seen from behind-above, facing "up": boxy great-helm with visor slits,
+// wide pauldrons, cape. Two leg frames for a walk cycle.
+function knightFrames(col, dark, light, opts = {}) {
+  return [0, 1].map(frame => makeSprite(26, 32, g => {
     const legA = frame ? 3 : 0;
-    g.fillStyle = edge; rr(g, 5.5, 18 - legA, 3.5, 6 + legA, 1.5); g.fill(); rr(g, 11, 18 - (3 - legA), 3.5, 6 + (3 - legA), 1.5); g.fill();
-    g.fillStyle = edge; rr(g, 4, 8, 12, 12, 4.5); g.fill();
-    g.fillStyle = body; rr(g, 5.2, 9.2, 9.6, 9.6, 3.6); g.fill();
-    if (opts.shield) { g.fillStyle = C.steel; ellipse(g, 15.5, 14, 2.6, 3.4); g.fillStyle = edge; ellipse(g, 15.5, 14, 1.1, 1.5); }
-    if (opts.club) { g.strokeStyle = C.woodDark; g.lineWidth = 2.6; g.lineCap = 'round'; g.beginPath(); g.moveTo(16, 16); g.lineTo(19.5, 6); g.stroke(); g.fillStyle = C.raiderDark; g.beginPath(); g.arc(19.5, 5.5, 2.2, 0, Math.PI * 2); g.fill(); }
-    g.fillStyle = head; g.beginPath(); g.arc(10, 6, 4.3, 0, Math.PI * 2); g.fill();
-    if (helmet) { g.fillStyle = helmet; rr(g, 5.4, 1.4, 9.2, 5.4, 2.8); g.fill(); }
-    if (opts.plume) { g.fillStyle = C.soldierBody; rr(g, 9, 0, 2, 5, 1); g.fill(); }
-    if (opts.horns) { g.fillStyle = C.steel; g.beginPath(); g.moveTo(5.5, 4); g.lineTo(3, 0); g.lineTo(7, 3); g.closePath(); g.fill(); g.beginPath(); g.moveTo(14.5, 4); g.lineTo(17, 0); g.lineTo(13, 3); g.closePath(); g.fill(); }
-    if (opts.eyes) { g.fillStyle = C.raiderEye; g.fillRect(7.5, 6.5, 1.6, 1.4); g.fillRect(10.9, 6.5, 1.6, 1.4); }
+    g.fillStyle = dark; rr(g, 7, 23 - legA, 5, 8 + legA, 2); g.fill(); rr(g, 14, 23 - (3 - legA), 5, 8 + (3 - legA), 2); g.fill();
+    if (opts.cape) { g.fillStyle = opts.cape; rr(g, 6, 12, 14, 17, 4); g.fill(); }
+    g.fillStyle = dark; rr(g, 5, 11, 16, 14, 5); g.fill();
+    g.fillStyle = col; rr(g, 6.2, 12.2, 13.6, 11.6, 4); g.fill();
+    if (opts.trim) { g.fillStyle = opts.trim; g.fillRect(6.2, 19, 13.6, 2); }
+    // pauldrons
+    g.fillStyle = dark; rr(g, 2, 11, 7, 7, 3); g.fill(); rr(g, 17, 11, 7, 7, 3); g.fill();
+    g.fillStyle = light; rr(g, 3, 12, 5, 4.5, 2.5); g.fill(); rr(g, 18, 12, 5, 4.5, 2.5); g.fill();
+    // shield (left) and sword (right)
+    g.fillStyle = C.steel; ellipse(g, 3.5, 20, 2.8, 3.6); g.fillStyle = dark; ellipse(g, 3.5, 20, 1.2, 1.6);
+    g.strokeStyle = C.steel; g.lineWidth = 2.2; g.lineCap = 'round'; g.beginPath(); g.moveTo(22, 20); g.lineTo(25.5, 9); g.stroke();
+    g.strokeStyle = opts.trim || C.woodDark; g.lineWidth = 2; g.beginPath(); g.moveTo(20.5, 21); g.lineTo(23.5, 19.5); g.stroke();
+    // great helm
+    g.fillStyle = dark; rr(g, 6.5, 1, 13, 12, 3.5); g.fill();
+    g.fillStyle = col; rr(g, 7.5, 2, 11, 10, 3); g.fill();
+    g.fillStyle = light; rr(g, 8.5, 2.5, 9, 3, 1.5); g.fill();
+    g.fillStyle = '#1a1d26'; rr(g, 8.5, 7.2, 9, 2.6, 1); g.fill();
+    g.fillStyle = light; g.fillRect(12.3, 7.2, 1.4, 2.6);
+    if (opts.plume) { g.fillStyle = opts.plume; rr(g, 11.5, -1, 3, 6, 1.5); g.fill(); }
+    if (opts.crown) { g.fillStyle = C.heroGold; g.beginPath(); g.moveTo(8.5, 2.5); g.lineTo(8.5, -1.5); g.lineTo(11, 1); g.lineTo(13, -2.5); g.lineTo(15, 1); g.lineTo(17.5, -1.5); g.lineTo(17.5, 2.5); g.closePath(); g.fill(); }
+  }));
+}
+// The orange horde: round critters with stubby legs, lighter bellies and dark eyes.
+function blobFrames(body, dark, belly, opts = {}) {
+  return [0, 1].map(frame => makeSprite(22, 22, g => {
+    const legA = frame ? 2 : 0;
+    g.fillStyle = dark; rr(g, 5, 16 - legA, 4, 5 + legA, 2); g.fill(); rr(g, 13, 16 - (2 - legA), 4, 5 + (2 - legA), 2); g.fill();
+    g.fillStyle = dark; ellipse(g, 11, 10.5, 9, 8.5);
+    g.fillStyle = body; ellipse(g, 11, 10, 8, 7.6);
+    g.fillStyle = belly; ellipse(g, 11, 12.5, 5, 3.6);
+    g.fillStyle = 'rgba(255,255,255,0.35)'; ellipse(g, 8, 6.5, 2.4, 1.6);
+    g.fillStyle = '#1a1d26'; ellipse(g, 8.2, 9.5, 1.3, 1.5); ellipse(g, 13.8, 9.5, 1.3, 1.5);
+    if (opts.tusks) { g.fillStyle = C.steel; g.beginPath(); g.moveTo(7, 13); g.lineTo(5.5, 16.5); g.lineTo(9, 14); g.closePath(); g.fill(); g.beginPath(); g.moveTo(15, 13); g.lineTo(16.5, 16.5); g.lineTo(13, 14); g.closePath(); g.fill(); }
+    if (opts.horns) { g.fillStyle = dark; g.beginPath(); g.moveTo(5, 6); g.lineTo(2.5, 1.5); g.lineTo(7.5, 4); g.closePath(); g.fill(); g.beginPath(); g.moveTo(17, 6); g.lineTo(19.5, 1.5); g.lineTo(14.5, 4); g.closePath(); g.fill(); }
   }));
 }
 const sprites = {};
 function buildSprites() {
-  sprites.soldier = soldierFrames(C.soldierBody, C.soldierDark, C.soldierHead, C.helmet, { shield: true, plume: true });
-  sprites.raider = soldierFrames(C.raiderBody, C.raiderDark, C.raiderHead, C.raiderHelm, { club: true, horns: true, eyes: true });
+  sprites.soldier = knightFrames('#d9332f', '#8f1414', '#f26b62');
+  sprites.king = knightFrames('#c9cfd8', '#6f7684', '#f1f3f6', { trim: C.heroGold, cape: '#c42626', crown: true });
+  sprites.raider = blobFrames('#f2a23c', '#b8641a', '#f8cf92');
+  sprites.brute = blobFrames('#e0832c', '#8f4a10', '#f3bf7e', { tusks: true, horns: true });
   sprites.hero = makeSprite(44, 56, g => {
     g.fillStyle = C.woodDark; g.fillRect(15, 38, 5, 10); g.fillRect(24, 38, 5, 10);
     g.fillStyle = C.heroTunic; rr(g, 11, 20, 22, 22, 7); g.fill();
@@ -639,19 +667,6 @@ function buildSprites() {
     g.fillStyle = 'rgba(0,0,0,0.25)'; g.fillRect(22, 46, 5, 5); g.fillRect(37, 46, 5, 5); g.fillRect(26, 57, 12, 3);
     g.fillStyle = C.cliff; rr(g, 6, 8, 52, 26, 7); g.fill();
     g.fillStyle = C.cliffLight; rr(g, 9, 10, 46, 18, 6); g.fill();
-  });
-  sprites.king = makeSprite(40, 58, g => {
-    g.fillStyle = C.horseDark; for (const [x, y] of [[9, 44], [27, 44], [11, 20], [25, 20]]) { rr(g, x, y, 4.5, 12, 2); g.fill(); }
-    g.fillStyle = C.horse; rr(g, 10, 14, 20, 36, 9); g.fill();
-    g.fillStyle = C.horseDark; rr(g, 15, 4, 10, 16, 5); g.fill(); g.fillStyle = C.horse; rr(g, 16, 5, 8, 13, 4); g.fill();
-    g.fillStyle = C.woodDark; rr(g, 17, 0, 2.5, 6, 1); g.fill(); rr(g, 20.5, 0, 2.5, 6, 1); g.fill();
-    g.fillStyle = C.cape; rr(g, 11, 26, 18, 20, 6); g.fill();
-    g.fillStyle = C.heroTunic; rr(g, 13, 24, 14, 14, 5); g.fill();
-    g.fillStyle = C.heroGold; g.fillRect(13, 33, 14, 2.5);
-    g.strokeStyle = C.steel; g.lineWidth = 3; g.lineCap = 'round'; g.beginPath(); g.moveTo(26, 28); g.lineTo(38, 12); g.stroke();
-    g.fillStyle = C.heroSkin; g.beginPath(); g.arc(20, 22, 5.5, 0, Math.PI * 2); g.fill();
-    g.fillStyle = C.heroGold; g.beginPath(); g.moveTo(14, 20); g.lineTo(14, 13); g.lineTo(17, 16.5); g.lineTo(20, 12); g.lineTo(23, 16.5); g.lineTo(26, 13); g.lineTo(26, 20); g.closePath(); g.fill();
-    g.fillStyle = C.soldierBody; g.beginPath(); g.arc(20, 14, 1.4, 0, Math.PI * 2); g.fill();
   });
   sprites.coin = makeSprite(20, 20, g => {
     g.fillStyle = C.coinDark; g.beginPath(); g.arc(10, 10, 10, 0, Math.PI * 2); g.fill();
@@ -775,7 +790,7 @@ function finishIntro() {
   game.world.nudgeKing(L.startPos.slice());
   hudEl.classList.remove('hide');
   banner('DAY 1', 'day', 1.2);
-  if (L.level === 1) { hint('Drag anywhere to ride', 0); game.tutorialStep = 1; }
+  if (L.level === 1) { hint('Drag anywhere to march', 0); game.tutorialStep = 1; }
   else hint('Build fast. Night falls in ' + L.dayLength + ' seconds.', 3);
   updateHud();
 }
@@ -831,8 +846,8 @@ function handle(ev) {
     }
     case 'slash': game.slashes.push({ x: ev.pos[0], y: ev.pos[1], angle: ev.angle, t: 0, life: 0.18, small: !!ev.small }); if (!ev.small) audio.slash(); break;
     case 'arrow': game.arrows.push({ x0: ev.from[0], y0: ev.from[1], x1: ev.to[0], y1: ev.to[1], t: 0, life: 0.28 }); audio.arrow(); break;
-    case 'hit': spawnSparks(ev.pos[0], ev.pos[1], 3); if (ev.what === 'king') { game.shake = Math.max(game.shake, 0.12); } audio.hit(); break;
-    case 'enemyDied': game.puffs.push({ x: ev.pos[0], y: ev.pos[1], t: 0, life: 0.35, big: ev.kind === 'brute' }); audio.die(); break;
+    case 'hit': spawnSparks(ev.pos[0], ev.pos[1], 3, 'rgba(255,95,210,'); if (ev.what === 'king') { game.shake = Math.max(game.shake, 0.12); } audio.hit(); break;
+    case 'enemyDied': game.puffs.push({ x: ev.pos[0], y: ev.pos[1], t: 0, life: 0.35, big: ev.kind === 'brute' }); spawnSparks(ev.pos[0], ev.pos[1], 4, 'rgba(255,95,210,'); audio.die(); break;
     case 'soldierDied': game.puffs.push({ x: ev.pos[0], y: ev.pos[1], t: 0, life: 0.35, red: true }); break;
     case 'wallBroken': spawnSparks(ev.spot.pos[0], ev.spot.pos[1], 14, 'rgba(140,92,46,'); game.shake = Math.max(game.shake, 0.25); addText('Palisade down!', ev.spot.pos[0], ev.spot.pos[1], '#ff6b5e', 22, 1.4); break;
     case 'keepHit': game.shake = Math.max(game.shake, 0.2); audio.keepHit(); spawnSparks(ev.pos[0], ev.pos[1], 3, 'rgba(255,120,80,'); break;
@@ -1083,7 +1098,7 @@ function collectActors(list) {
   }
   // Soldiers
   for (const s of w.soldiers) {
-    const frame = s.moving || s.target ? ((game.time * 12 + s.id * 1.7) | 0) % 2 : 0;
+    const frame = s.moving || s.target ? ((game.time * 9 + s.id * 1.7) | 0) % 2 : 0;
     list.push({ kind: 'unit', sp: sprites.soldier[frame], x: s.pos[0], y: s.pos[1], scale: UNIT_SCALE, angle: s.facing, z: s.moving ? Math.max(0, Math.sin(game.time * 14 + s.id)) * 0.06 : 0, hp: s.hp / SOLDIER.hp });
   }
   // Raiders
@@ -1094,13 +1109,14 @@ function collectActors(list) {
     const moving = !e.attacking;
     const frame = moving || e.attacking ? ((game.time * 12 + e.id * 1.3) | 0) % 2 : 0;
     const jx = e.attacking ? Math.sin(game.time * 26 + e.id) * 0.05 : 0;
-    list.push({ kind: 'unit', sp: sprites.raider[frame], x: p[0] + t[0] * jx, y: p[1] + t[1] * jx, scale: UNIT_SCALE * def.scale, angle: Math.atan2(t[1], t[0]), z: moving ? Math.max(0, Math.sin(game.time * 14 + e.id)) * 0.06 : 0, hp: e.hp < e.maxHp ? e.hp / e.maxHp : null, enemy: true });
+    list.push({ kind: 'unit', sp: (e.kind === 'brute' ? sprites.brute : sprites.raider)[frame], x: p[0] + t[0] * jx, y: p[1] + t[1] * jx, scale: UNIT_SCALE * def.scale, angle: Math.atan2(t[1], t[0]), z: moving ? Math.max(0, Math.sin(game.time * 14 + e.id)) * 0.06 : 0, hp: e.hp < e.maxHp ? e.hp / e.maxHp : null, enemy: true });
   }
   // The king
   const k = w.king;
   if (k.down <= 0 || game.intro) {
-    const gallop = k.moving ? Math.abs(Math.sin(game.time * 9)) * 0.12 : 0;
-    list.push({ kind: 'unit', sp: sprites.king, x: k.pos[0], y: k.pos[1], scale: 1.25, angle: k.facing, z: gallop, stretch: 1 + gallop * 0.5, shadowR: 0.5, king: true, hp: k.hp < KING.hp ? k.hp / KING.hp : null });
+    const frame = k.moving ? ((game.time * 10) | 0) % 2 : 0;
+    const bob = k.moving ? Math.max(0, Math.sin(game.time * 20)) * 0.05 : 0;
+    list.push({ kind: 'unit', sp: sprites.king[frame], x: k.pos[0], y: k.pos[1], scale: UNIT_SCALE * 1.35, angle: k.facing, z: bob, shadowR: 0.36, king: true, hp: k.hp < KING.hp ? k.hp / KING.hp : null });
     if (w.carried > COIN_MAX) list.push({ kind: 'badge', text: String(w.carried), x: k.pos[0], y: k.pos[1], z: 2.2, size: 20, sortY: -1e9 });
   }
 }
@@ -1143,7 +1159,7 @@ function drawEffects(dt) {
   for (const s of game.slashes) {
     const u = s.t / s.life, r = (s.small ? 0.7 : 1.2) * game.ppu;
     ctx.save(); ctx.translate(sx(s.x), sy(s.y, 0.6)); ctx.scale(1, TILT); ctx.rotate(-s.angle);
-    ctx.strokeStyle = 'rgba(255,255,255,' + (1 - u) + ')'; ctx.lineWidth = (s.small ? 3 : 5) * k * (1 - u * 0.5); ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(' + (s.small ? '255,255,255,' : '255,95,210,') + (1 - u) + ')'; ctx.lineWidth = (s.small ? 3 : 5) * k * (1 - u * 0.5); ctx.lineCap = 'round';
     ctx.beginPath(); ctx.arc(0, 0, r, -0.9 + u * 0.4, 0.9 + u * 0.4); ctx.stroke(); ctx.restore();
   }
   game.sparks = game.sparks.filter(s => (s.t += dt) < s.life);
@@ -1155,7 +1171,7 @@ function drawEffects(dt) {
   game.puffs = game.puffs.filter(p => (p.t += dt) < p.life);
   for (const p of game.puffs) {
     const u = p.t / p.life, r = (p.big ? 0.9 : 0.6) * game.ppu * (0.4 + u);
-    ctx.fillStyle = p.red ? 'rgba(220,43,43,' + (0.5 * (1 - u)) + ')' : 'rgba(60,64,78,' + (0.55 * (1 - u)) + ')';
+    ctx.fillStyle = p.red ? 'rgba(220,43,43,' + (0.5 * (1 - u)) + ')' : 'rgba(242,162,60,' + (0.5 * (1 - u)) + ')';
     for (let i = 0; i < 4; i++) { const a = i * 1.57 + u * 2; ctx.beginPath(); ctx.arc(sx(p.x) + Math.cos(a) * r * 0.5, sy(p.y, 0.4 + u * 0.5) + Math.sin(a) * r * 0.3, r * 0.45, 0, Math.PI * 2); ctx.fill(); }
   }
   game.coinsFx = game.coinsFx.filter(c => (c.t += dt) < c.life);

@@ -1,7 +1,7 @@
 # Kingshot — Hold the Keep
 
 A recreation of the minigame Kingshot (Century Games) actually opens with: a Thronefall-style
-real-time defense. You ride the king around a sandy road between grey cliffs, your gold
+real-time defense. You march the king, a silver plate knight, along a sandy road between grey cliffs, your gold
 follows you as a trail of coins, you stand on green price signs to pay for hero towers,
 palisades, farms and barracks, and then you hold the road through the night while raiders
 march on the keep. Three waves in the first few minutes, more on later levels.
@@ -10,7 +10,7 @@ march on the keep. Three waves in the first few minutes, more on later levels.
 
 Reading the reference frame: the orange blob is the coin trail behind the player, the green
 squares marked 20 and 25 with a coin icon are build-site prices, the hero on the stone pillar
-is a built tower, and the red column is the player's own soldiers following the king.
+is a built tower, the red column is the player's own knights following the silver-armoured king, and the orange round creatures with pink hit-sparks around them are the enemy horde.
 
 ## Play it in a browser
 
@@ -20,7 +20,7 @@ The browser build is the current version of the game and lives in
 
 | Action | Result |
 |---|---|
-| Drag anywhere (or WASD / arrows) | Ride the king; soldiers and your gold follow |
+| Drag anywhere (or WASD / arrows) | March the king; your knights and your gold follow |
 | Ride over coins | Pick them up; they join the trail |
 | Stand on a price sign | Coins fly from your trail into the site until it is built |
 | Hero Tower (25) | Archer on a pedestal, shoots raiders in range |

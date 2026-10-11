@@ -8,10 +8,10 @@ coverage of the game's onboarding gives a consistent picture:
 
 | In the frame | What it is |
 |---|---|
-| Dense blob of orange discs on the road | The player's gold, trailing behind the king as a stream of coins |
+| Dense blob of orange round creatures on the road, pink sparks at the edges | The enemy horde, in melee with the player's knights (first read as coins; the enlarged crop shows eyes and legs) |
 | Green squares with a coin icon and 20 / 25 | Build-site price signs painted on the ground |
 | Hero in blue with a golden helmet on a stone pillar | A built hero tower |
-| Column of red soldiers with silver helmets, knight with red plume | The player's own troops following the king |
+| Column of chunky red knights with boxy great-helms, a silver one among them | The player's own knights following the king, who is a silver plate knight on foot |
 | Sandy road between grey cliffs, lumber hut, trees | The map the raiders come up at night |
 
 Sources (page bodies are blocked from this environment; these are from search summaries):
@@ -32,7 +32,7 @@ Sources (page bodies are blocked from this environment; these are from search su
 
 ## Rules as implemented (browser build)
 
-* **Movement.** Virtual joystick or keys. The king can ride the road and the plaza in front
+* **Movement.** Virtual joystick or keys. The king (a plate knight on foot, drawn at 1.35× a soldier) can walk the road and the plaza in front
   of the keep; the cliffs are walls.
 * **Gold.** A count, drawn as a trail of up to sixty coins following the king's breadcrumb
   path. Loose coins are picked up within about one unit and are pulled in from two.
