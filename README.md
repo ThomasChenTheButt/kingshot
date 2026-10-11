@@ -14,7 +14,10 @@ A single-file HTML port of the same game lives in [`web/index.html`](web/index.h
 published at **https://claude.ai/artifact/DksLCaJZkScSABvMM6zN1C**. It runs on any phone or
 desktop browser: tap to start, hold and drag (or use the arrow keys) to steer. It shares the
 rules engine and the measured level generator with the Swift app, so a level plays the same
-way in both, and it has no build step: open the file or drop it on any static host.
+way in both, and it has no build step: open the file or drop it on any static host. The
+browser build carries the current look: a tilted pseudo-3D camera, a cinematic opening in
+which the king rides out of the gatehouse ahead of his troops, animated soldiers, and the
+king leading the column during play. The SpriteKit scene still uses the first flat art pass.
 
 ## Running the iOS app
 

@@ -68,7 +68,38 @@ pilot brings to the keep. The consequences:
 The starting army grows by two soldiers per level (10 → 60), road length grows by eight
 units per level up to level 25, and hero damage grows by one every three levels.
 
-## Presentation choices
+## What the research turned up
+
+Direct page fetches are blocked from the build environment, so this comes from search
+summaries of the following: PocketGamer's hands-on, the Gamigion and AdMapix ad teardowns,
+the fakeadgames.com archive, and the Thronefall community threads.
+
+* Kingshot's ads are low-poly 3D Thronefall-style scenes wrapped around door-runner "math
+  gate" mechanics (`+50`, `x3`), with a small king on horseback riding across the terrain
+  as the recurring opening hook; other hooks are a cinematic king posing a question and a
+  battlefield pan.
+* The in-game tutorial is tower-defence-led; the closest real mode to the ad is the Mystic
+  Trials.
+* Community posts say the ad footage borrows Thronefall's camera, hero and music.
+
+## Presentation choices (browser version)
+
+* **Tilted pseudo-3D camera.** World y is foreshortened by 0.84, cliffs are drawn as a dark
+  face at ground level with a lifted top ring (outer polygon minus road polygon, even-odd
+  fill), trees and the keep are lifted the same way, and every actor stands on an ellipse
+  shadow. Terrain polygons are culled to the visible sample range each frame.
+* **Opening cinematic.** On "Tap to play" the camera starts at the keep and eases down the
+  road over two seconds under a "LEVEL n" banner; the king then rides out of the wooden
+  gatehouse behind the start with the soldiers streaming after him into formation; "GO!"
+  hands over control. A tap skips to the ride-out.
+* **King on horseback** leads the column during play, gallop-bobbing while the army moves.
+* **Soldiers** are two-frame run cycles with squash and stretch, rotated to the road
+  direction; enemies face back down the road and jitter when engaged.
+* **Feedback.** Screen shake on contact, white clash sparks during trades, arcing arrows
+  from heroes, coin bursts on kills and victory, a progress bar with the keep at its end,
+  and a short synth palette (fanfare, GO sting, gate chimes, clash ticks).
+
+## Presentation choices (iOS version)
 
 * Sprites are drawn once with Core Graphics (`TextureFactory`), so the app ships with no
   bitmap assets other than the icon.
