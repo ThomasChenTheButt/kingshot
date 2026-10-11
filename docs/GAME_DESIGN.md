@@ -45,10 +45,10 @@ level always plays the same way. It walks the road dropping segments:
   The first segment of every level is always two buffs so the mechanic teaches itself.
   Multiplier gates are only offered while doubling would stay under a per-level headcount
   cap, which keeps numbers readable instead of exploding into the thousands.
-* **Formation** (30 %) – 30–60 % of the current headcount, either full width or in one lane
+* **Formation** (30 %) – 25–50 % of the current headcount, either full width or in one lane
   so it can be dodged.
 * **Hero ambush** (16 %) – a pedestal six units before a full-width formation. The formation
-  is sized as "what the hero will shoot" plus 35–60 % of the current headcount, so the hero
+  is sized as "what the hero will shoot" plus 30–50 % of the current headcount, so the hero
   visibly matters but the player still has to finish the job.
 * **Single buff gate** (12 %).
 

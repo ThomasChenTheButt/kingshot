@@ -24,7 +24,7 @@ public enum LevelGenerator {
 
         let length = 80.0 + 8.0 * Double(min(lvl, 25))
         let start = startCount(for: lvl)
-        let cap = 60.0 + 30.0 * Double(lvl)          // soft ceiling on the headcount
+        let cap = 80.0 + 40.0 * Double(lvl)          // soft ceiling on the headcount
         let track = TrackGeometry(seed: seed, requiredLength: length)
         let pilot = GreedyPilot()
 
@@ -67,14 +67,14 @@ public enum LevelGenerator {
                 let flavour = segment == 0 ? 0.0 : Double.random(in: 0..<1, using: &rng)
                 if flavour < 0.55 {
                     // Two buffs of differing quality.
-                    left = .add(roundTo5(max(5, min(headcount, cap) * Double.random(in: 0.3...0.6, using: &rng))))
-                    right = buff(headcount, 0.7, 1.1)
+                    left = .add(roundTo5(max(5, min(headcount, cap) * Double.random(in: 0.4...0.7, using: &rng))))
+                    right = buff(headcount, 0.9, 1.4)
                 } else {
                     // One buff, one trap.
                     let trap: GateOp = Double.random(in: 0..<1, using: &rng) < 0.5
                         ? .subtract(roundTo5(headcount * 0.5))
                         : .divide(2)
-                    left = buff(headcount, 0.4, 0.9)
+                    left = buff(headcount, 0.6, 1.1)
                     right = trap
                 }
                 if Bool.random(using: &rng) {
@@ -84,7 +84,7 @@ public enum LevelGenerator {
                 gates.append(GateSpec(id: takeID(), s: s, lane: .right, op: right))
             } else if roll < 0.72 {
                 // --- Enemy formation, full width or in one lane so it can be dodged ---
-                let count = max(3, Int(headcount * Double.random(in: 0.3...0.6, using: &rng)))
+                let count = max(3, Int(headcount * Double.random(in: 0.25...0.5, using: &rng)))
                 let full = Double.random(in: 0..<1, using: &rng) < 0.35
                 let x = full ? 0.0 : (Bool.random(using: &rng) ? -0.5 : 0.5)
                 enemies.append(EnemyGroupSpec(id: takeID(), s: s, x: x, halfWidth: full ? 1.0 : 0.5, count: count))
@@ -97,13 +97,13 @@ public enum LevelGenerator {
                                        damage: damage, fireInterval: heroFireInterval))
                 // The formation is sized so that, after the hero's volleys, roughly a third to
                 // a half of the player's army is needed to finish it off.
-                let contact = max(4, Int(headcount * Double.random(in: 0.35...0.6, using: &rng)))
+                let contact = max(4, Int(headcount * Double.random(in: 0.3...0.5, using: &rng)))
                 enemies.append(EnemyGroupSpec(id: takeID(), s: s + heroAmbushGap, x: 0, halfWidth: 1.0,
                                               count: contact + expectedHeroKills(damage: damage)))
                 s += heroAmbushGap
             } else {
                 // --- Single full-width buff gate ---
-                gates.append(GateSpec(id: takeID(), s: s, lane: .full, op: buff(headcount, 0.4, 0.8)))
+                gates.append(GateSpec(id: takeID(), s: s, lane: .full, op: buff(headcount, 0.6, 1.0)))
             }
 
             headcount = Double(measure(upTo: s + 8))

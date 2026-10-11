@@ -8,7 +8,15 @@ keep with more soldiers than the boss.
 
 <p align="center"><img src="docs/reference.webp" width="320" alt="Reference frame from the original"></p>
 
-## Running it
+## Play it in a browser
+
+A single-file HTML port of the same game lives in [`web/index.html`](web/index.html) and is
+published at **https://claude.ai/artifact/DksLCaJZkScSABvMM6zN1C**. It runs on any phone or
+desktop browser: tap to start, hold and drag (or use the arrow keys) to steer. It shares the
+rules engine and the measured level generator with the Swift app, so a level plays the same
+way in both, and it has no build step: open the file or drop it on any static host.
+
+## Running the iOS app
 
 1. Open `Kingshot.xcodeproj` in Xcode 16 or newer (the project uses file-system-synchronised
    groups, so new files dropped into `Kingshot/` or `KingshotTests/` are picked up
@@ -46,6 +54,7 @@ Kingshot/
               HUD, terrain builder
   Assets.xcassets
 KingshotTests/  XCTest suites for Core
+web/            Browser port: one HTML file, canvas renderer, same rules and generator
 docs/           Design notes reconstructed from the reference footage
 ```
 
