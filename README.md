@@ -1,25 +1,44 @@
-# Kingshot — Road to the Keep
+# Kingshot — Hold the Keep
 
-A native iOS (SpriteKit + SwiftUI) recreation of the crowd-runner "gate" minigame from
-Kingshot, Century Games' kingdom-strategy title. You drive a horde of orange soldiers up a
-winding sandy road between grey cliffs, pick the better of two number gates, dodge red
-ambush formations, let the heroes on their pedestals thin the enemy out, and arrive at the
-keep with more soldiers than the boss.
+A recreation of the minigame Kingshot (Century Games) actually opens with: a Thronefall-style
+real-time defense. You ride the king around a sandy road between grey cliffs, your gold
+follows you as a trail of coins, you stand on green price signs to pay for hero towers,
+palisades, farms and barracks, and then you hold the road through the night while raiders
+march on the keep. Three waves in the first few minutes, more on later levels.
 
 <p align="center"><img src="docs/reference.webp" width="320" alt="Reference frame from the original"></p>
 
+Reading the reference frame: the orange blob is the coin trail behind the player, the green
+squares marked 20 and 25 with a coin icon are build-site prices, the hero on the stone pillar
+is a built tower, and the red column is the player's own soldiers following the king.
+
 ## Play it in a browser
 
-A single-file HTML port of the same game lives in [`web/index.html`](web/index.html) and is
-published at **https://claude.ai/artifact/DksLCaJZkScSABvMM6zN1C**. It runs on any phone or
-desktop browser: tap to start, hold and drag (or use the arrow keys) to steer. It shares the
-rules engine and the measured level generator with the Swift app, so a level plays the same
-way in both, and it has no build step: open the file or drop it on any static host. The
-browser build carries the current look: a tilted pseudo-3D camera, a cinematic opening in
-which the king rides out of the gatehouse ahead of his troops, animated soldiers, and the
-king leading the column during play. The SpriteKit scene still uses the first flat art pass.
+The browser build is the current version of the game and lives in
+[`web/index.html`](web/index.html), published at
+**https://claude.ai/artifact/DksLCaJZkScSABvMM6zN1C**. One HTML file, no build step.
+
+| Action | Result |
+|---|---|
+| Drag anywhere (or WASD / arrows) | Ride the king; soldiers and your gold follow |
+| Ride over coins | Pick them up; they join the trail |
+| Stand on a price sign | Coins fly from your trail into the site until it is built |
+| Hero Tower (25) | Archer on a pedestal, shoots raiders in range |
+| Palisade (15) | Blocks the road until raiders batter it down; repaired each morning |
+| Farm (10) | More gold at the gate every morning |
+| Barracks (20) | Five soldiers who follow you and fight; replenished each morning |
+| "Call the night" | Starts the next wave early; otherwise the day timer runs out |
+
+The king fights whatever comes within reach of his sword. If he falls he returns at the gate
+after four seconds. Lose the keep and the level is lost; break every wave and you move on.
+
+An earlier build, a crowd-runner through number gates, is kept as
+[`web/road-runner.html`](web/road-runner.html).
 
 ## Running the iOS app
+
+The SpriteKit app under `Kingshot/` is still the earlier crowd-runner design and has not yet
+been brought in line with the keep-defense game above.
 
 1. Open `Kingshot.xcodeproj` in Xcode 16 or newer (the project uses file-system-synchronised
    groups, so new files dropped into `Kingshot/` or `KingshotTests/` are picked up

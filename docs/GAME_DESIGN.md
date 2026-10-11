@@ -1,4 +1,69 @@
-# Kingshot road minigame — design reconstruction
+# Kingshot opening — design reconstruction
+
+## What the game actually is (corrected)
+
+The first pass read the reference frame as a crowd-runner through number gates, the format
+Kingshot's ads are known for. That was wrong. Re-reading the frame together with the trade
+coverage of the game's onboarding gives a consistent picture:
+
+| In the frame | What it is |
+|---|---|
+| Dense blob of orange discs on the road | The player's gold, trailing behind the king as a stream of coins |
+| Green squares with a coin icon and 20 / 25 | Build-site price signs painted on the ground |
+| Hero in blue with a golden helmet on a stone pillar | A built hero tower |
+| Column of red soldiers with silver helmets, knight with red plume | The player's own troops following the king |
+| Sandy road between grey cliffs, lumber hut, trees | The map the raiders come up at night |
+
+Sources (page bodies are blocked from this environment; these are from search summaries):
+
+* Gamigion's funnel analysis says Kingshot's early loop borrows Thronefall's
+  joystick-controlled wave defense, placed inside a medieval 4X, and that "3 waves of
+  enemies hit within the first 8 minutes".
+* The GameDiscover newsletter says Kingshot "starts with real-time Thronefall-clone gameplay"
+  as the hook that onboards players into the 4X game.
+* PocketGamer's hands-on describes a small king on horseback riding across terrain and
+  placing towers to hold off enemies.
+* Thronefall community threads say the Kingshot footage reuses Thronefall's camera, hero
+  and music.
+* Thronefall's own rules (Wikipedia, fan wikis): gold is the only resource, buildings go on
+  fixed spots, each level alternates a day build phase and a night defense phase, the
+  monarch fights alongside barracks troops, and only buildings that survive the night pay
+  out the next morning.
+
+## Rules as implemented (browser build)
+
+* **Movement.** Virtual joystick or keys. The king can ride the road and the plaza in front
+  of the keep; the cliffs are walls.
+* **Gold.** A count, drawn as a trail of up to sixty coins following the king's breadcrumb
+  path. Loose coins are picked up within about one unit and are pulled in from two.
+* **Building.** Within 1.6 units of an unbuilt site, one coin leaves the trail every 0.07 s
+  and flies into the sign; the sign fills from the bottom and counts down. Sites: hero tower
+  (range 7.5, a shot every 0.65 s for 2), palisade (40 hp, blocks the road, repaired every
+  morning), farm (+6 gold a morning), barracks (five soldiers, replenished every morning).
+* **Day.** A countdown (60 s on level 1, 45 s after) or the "Call the night" button.
+* **Night.** Raiders (3 hp, speed 2.1) and brutes (9 hp, slower, hit harder) spawn about 34
+  units down the road and walk up it. A standing palisade just ahead stops them; otherwise a
+  soldier or the king within one unit; otherwise, at the gate, the keep (30 hp). Towers,
+  soldiers and the king's sword (3 damage, reach 1.45) kill them; each drops a coin.
+* **Morning.** Income (10 + 2 per level, plus farms) pours out of the gate as loose coins;
+  walls and the king heal; barracks refill.
+* **Levels.** Wave count 3 to 5, wave size 4 + 2w + 2(level - 1), more sites unlock at
+  levels 2, 3, 4 and 5, starting gold and income rise with the level.
+
+## Opening cinematic
+
+The camera starts a little way up the raiders' road and eases to the keep under a
+"LEVEL n / HOLD THE KEEP" banner with a horn fanfare; the king then rides out of the gate
+with his starting gold streaming behind him; "DAY 1" and the first hint follow. A tap skips
+to the ride-out.
+
+---
+
+## Earlier (superseded) reconstruction: the gate runner
+
+The material below documents the first build, which is kept as `web/road-runner.html` and as
+the SpriteKit app.
+
 
 This document records what was inferred from the reference frame (`reference.webp`) and
 from how Kingshot's advertised "road" minigame plays, and maps each observation onto the
